@@ -20,23 +20,23 @@ import random
 import time
 import re
 
+
 class config:
-    batch_size = 32
+    batch_size = 1
     max_seq_len = 256
     num_p = 23
     learning_rate = 1e-5
     EPOCH = 2
 
-    PATH_SCHEMA = "/Users/yangyf/workplace/model/medical_re/predicate.json"
-    PATH_TRAIN = '/Users/yangyf/workplace/model/medical_re/train_data.json'
-    PATH_BERT = "/Users/yangyf/workplace/model/medical_re/"
-    PATH_MODEL = "/Users/yangyf/workplace/model/medical_re/model_re.pkl"
-    PATH_SAVE = '/content/model_re.pkl'
-    tokenizer = BertTokenizer.from_pretrained("/Users/yangyf/workplace/model/medical_re/" + 'vocab.txt')
+    PATH_SCHEMA = 'F:\\SoftwareMaker\\CMeKG_tools\\predicate.json'
+    PATH_TRAIN = 'F:\\SoftwareMaker\\CMeKG_tools\\train_example.json'
+    PATH_BERT = "F:\\SoftwareMaker\\CMeKG_tools\\model\\medical_re"
+    PATH_MODEL = "F:\\SoftwareMaker\\CMeKG_tools\\model\\medical_re\\model_re.pkl"
+    PATH_SAVE = 'F:\\SoftwareMaker\\CMeKG_tools\\model\\save'
+    tokenizer = BertTokenizer.from_pretrained("F:\\SoftwareMaker\\CMeKG_tools\\model\\medical_re\\vocab.txt")
 
     id2predicate = {}
     predicate2id = {}
-
 
 
 class IterableDataset(torch.utils.data.IterableDataset):
@@ -108,6 +108,7 @@ class IterableDataset(torch.utils.data.IterableDataset):
 
     def __iter__(self):
         return self.get_stream()
+
 
 # 就是
 class Model4s(nn.Module):
@@ -444,14 +445,14 @@ def get_triples(content, model4s, model4po):
         })
     return res
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     with open(config.PATH_TRAIN, 'r', encoding="utf-8", errors='replace') as f:
         data = json.load(f)
 
-        f1=open("train.json","w")
+        f1 = open("train.json", "w")
 
-        json.dump(data,f1,ensure_ascii=False,indent=True)
+        json.dump(data, f1, ensure_ascii=False, indent=True)
         print("finish")
 
     # load_schema(config.PATH_SCHEMA)
@@ -462,4 +463,3 @@ if __name__ == "__main__":
     # res = get_triples(text, model4s, model4po)
 
     # print(res)
-
