@@ -33,7 +33,7 @@ class config:
     PATH_BERT = "F:\\SoftwareMaker\\CMeKG_tools\\model\\medical_re"
     PATH_MODEL = "F:\\SoftwareMaker\\CMeKG_tools\\model\\medical_re\\model_re.pkl"
     PATH_SAVE = 'F:\\SoftwareMaker\\CMeKG_tools\\model\\save'
-    tokenizer = BertTokenizer.from_pretrained("F:\\SoftwareMaker\\CMeKG_tools\\model\\medical_re\\vocab.txt")
+    tokenizer = BertTokenizer.from_pretrained("F:\\SoftwareMaker\\CMeKG_tools\\model\\medical_re\\" + 'vocab.txt')
 
     id2predicate = {}
     predicate2id = {}
@@ -420,11 +420,13 @@ def load_model():
     checkpoint = torch.load(config.PATH_MODEL, map_location='cpu')
 
     model4s = Model4s()
-    model4s.load_state_dict(checkpoint['model4s_state_dict'])
+    model4s.load_state_dict(checkpoint['model4s_state_dict'], False)  # 当strict=True,
+    # 要求预训练权重层数的键值与新构建的模型中的权重层数名称完全吻合；如果新构建的模型在层数上进行了部分微调，则上述代码就会报错：说key对应不上。此时，如果我们采用strict=False
+    # 就能够完美的解决这个问题。也即，与训练权重中与新构建网络中匹配层的键值就进行使用，没有的就默认初始化。
     # model4s.cuda()
 
     model4po = Model4po()
-    model4po.load_state_dict(checkpoint['model4po_state_dict'])
+    model4po.load_state_dict(checkpoint['model4po_state_dict'], False)
     # model4po.cuda()
 
     return model4s, model4po
@@ -455,11 +457,11 @@ if __name__ == "__main__":
         json.dump(data, f1, ensure_ascii=False, indent=True)
         print("finish")
 
-    # load_schema(config.PATH_SCHEMA)
-    # model4s, model4po = load_model()
-    #
-    # text = "据报道称，新冠肺炎患者经常会发热、咳嗽，少部分患者会胸闷、=乏力，其病因包括: 1.自身免疫系统缺陷\n2.人传人。"
-    #
-    # res = get_triples(text, model4s, model4po)
+    load_schema(config.PATH_SCHEMA)
+    model4s, model4po = load_model()
 
-    # print(res)
+    text = "据报道称，新冠肺炎患者经常会发热、咳嗽，少部分患者会胸闷、=乏力，其病因包括: 1.自身免疫系统缺陷\n2.人传人。"
+
+    res = get_triples(text, model4s, model4po)
+
+    print(res)
